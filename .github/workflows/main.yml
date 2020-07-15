@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+    types:
+      - prereleased
+      - released
+      - edited
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.action != 'released'
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/build-push-action@v1
+      name: publish-wsify-image
+      with:
+        repository: capesh/wsify
+        tag_with_ref: true
+        username: biqmindcloudnative
+        password: ${{secrets.DOCKERHUB_REG}}
+        dockerfile: Dockerfile
